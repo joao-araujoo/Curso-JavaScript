@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiro programa</title>
+    <style>
+        body {
+            background-color: rgba(192, 112, 230, 0.904);
+            color: antiquewhite; /*Comentário em CSS*/
+            font: normal 15pt Arial;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Olá, Mundo!</h1> <!--Comentário em HTML-->
+    <p>Hello, World!</p>
+    <script>
+
+        //Poderia ser "Number.parseInt()"
+        var n1 = parseInt(window.prompt('Digite um número: ')) 
+        //O JavaScript decifra o tipo do número
+        var n2 = Number(window.prompt('Digite outro número: '))
+
+        var s = n1 + n2
+        window.alert('A soma entre ' + n1 + ' e ' + n2 + ' é igual a: ' + String(s))
+        window.alert(`A soma entre ${n1} e ${n2} é igual a: ${s}`)
+
+    </script>
+</body>
+
+</html>

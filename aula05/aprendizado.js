@@ -8,4 +8,4 @@ typeof sobrenome //deverá retornar "string"
 typeof idade //deverá retornar "number"
 typeof telefone //deverá retornar "string"
 typeof NaN //deverá retornar "number"
-typeof [] //deverá retornar "object"s
+typeof [] //deverá retornar "object"
