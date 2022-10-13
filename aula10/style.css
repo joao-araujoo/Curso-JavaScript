@@ -28,6 +28,7 @@ button {
 }
 
 #resultado {
+    margin-left: 115px;
     margin-top: 10px;
     color: #f4e9ed;
 }
