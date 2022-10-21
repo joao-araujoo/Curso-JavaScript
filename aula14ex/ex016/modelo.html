@@ -11,15 +11,21 @@
 
 <body>
     <header>
-        <h1>Título</h1>
+        <h1>Vamos contar</h1>
     </header>
 
     <section>
         <div>
-            
+            <label for="txt-inicio">Início:</label>
+            <input type="number" name="txt-inicio" id="txt-inicio"><br>
+            <label for="txt-inicio">Fim:</label>
+            <input type="number" name="txt-fim" id="txt-fim"><br>
+            <label for="txt-passo">Passo:</label>
+            <input type="number" name="txt-passo" id="txt-passo"><br>
+            <input type="button" id="botao" value="Contar">
         </div>
-        <div>
-
+        <div id="resultado">
+            <p>Preparando a contagem...</p>
         </div>
     </section>
 
