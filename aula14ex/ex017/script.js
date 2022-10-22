@@ -14,6 +14,7 @@ function tabuada(){
         while(x <= 10){
             let item = document.createElement('option')
             item.text = `${n} x ${x} = ${n * x}`
+            item.value = `tab${x}`
             tab.appendChild(item)
             x++
         }
