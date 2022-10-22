@@ -22,3 +22,12 @@ footer {
     text-align: center;
     font-style: italic;
 }
+
+#dados input {
+    margin-top: 20px;
+    width: 50px;
+}
+
+#resultado {
+    margin-top: 20px;
+}
