@@ -24,3 +24,16 @@ for(pos in vetor2){
 }
 
 console.log(somatório)
+
+// 3- Crie um array de 10 posições que receberá 'par' em posições pares e 'ímpar' em posições ímpares
+
+let vetor3 = ['','','','','','','','','','']
+
+for(pos in vetor3){
+    if(pos % 2 == 0){
+        vetor3[pos] = 'par'
+    } else {
+        vetor3[pos] = 'ímpar'
+    }
+    console.log(`Posição: ${pos} = ${vetor3[pos]}`)
+}
