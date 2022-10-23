@@ -13,3 +13,14 @@ function crescente(){
 }
 
 crescente()
+
+// 2- Crie um programa que some todos os valores de um array
+
+let vetor2 = [1, 2, 3, 4, 5, 6, 7]
+let somatório = 0
+
+for(pos in vetor2){
+    somatório += vetor2[pos]
+}
+
+console.log(somatório)
