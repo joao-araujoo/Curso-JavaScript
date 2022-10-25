@@ -2,6 +2,7 @@ let botaoAdicionar = document.querySelector('input#adicionar')
 botaoAdicionar.addEventListener('click', adicionar)
 let botaoFinalizar = document.querySelector('input#finalizar')
 botaoFinalizar.addEventListener('click', finalizar)
+let resultado = document.querySelector('div#resultado')
 
 let números = []
 
@@ -18,33 +19,45 @@ function adicionar(){
     if(txtn.value.length == 0){
         alert('[ERRO] Por favor insira um número!')
     } else if(txtn.value < 1 || txtn.value > 100){
-        alert('[ERRO] Insira apenas números entre 1 e 100')
+        alert('[ERRO] Insira apenas números entre 1 e 100!')
     } else if(estaNaLista(txtn.value, números) == true){
-        alert('[ERRO] Não insira números repetidos')
+        alert('[ERRO] Não insira números repetidos!')
     } else{
-        let n = Number(txtn.value)
-        números.push(n)
-
+        números.push(Number(txtn.value))
         let tab = document.querySelector('select#seltab')
         let item = document.createElement('option')
-        item.text = `Valor ${n} adicionado`
+        item.text = `Valor ${txtn.value} adicionado`
         tab.appendChild(item) 
+        resultado.innerHTML = ''
     }
+    txtn.value = ''
+    txtn.focus()
 }
 
 function finalizar(){
+    if(números.length == 0){
+        alert('[ERRO] Insira valores antes de finalizar!')
+    } else{
+        let somatório = 0
+        let maior = números[0]
+        let menor = números[0]
 
-    let resultado = document.querySelector('div#resultado')
-    let numeros_cadastrados = 0
-    let s = 0
-    números.sort()
-    for(pos in números){
-        s += números[pos]
-        numeros_cadastrados++
+        for(let pos in números){
+            if(números[pos] > maior){
+                maior = números[pos]
+            }
+            if(números[pos] < menor){
+                menor = números[pos]
+            }
+
+            somatório += números[pos]
+        }
+
+        resultado.innerHTML = `Ao todo, temos ${números.length} números cadastrados<br>`
+        resultado.innerHTML += `O maior número é ${maior}<br>`
+        resultado.innerHTML += `O menor número é ${menor}<br>`
+        resultado.innerHTML += `Somando todos os valores, temos ${somatório}<br>`
+        resultado.innerHTML += `A média dos valores digitados é ${somatório/números.length}<br>`
     }
-    resultado.innerHTML = `Ao todo, temos ${numeros_cadastrados} números cadastrados<br>`
-    resultado.innerHTML += `O maior número é ${números[numeros_cadastrados-1]}<br>`
-    resultado.innerHTML += `O menor número é ${números[0]}<br>`
-    resultado.innerHTML += `Somando todos os valores, temos ${s}<br>`
-    resultado.innerHTML += `A média dos valores digitados é ${s/numeros_cadastrados}<br>`
+    
 }

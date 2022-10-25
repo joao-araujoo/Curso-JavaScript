@@ -21,6 +21,10 @@ select {
     width: 150px;
 }
 
+div#resultado {
+    margin-top: 20px;
+}
+
 footer {
     color: white;
     text-align: center;
