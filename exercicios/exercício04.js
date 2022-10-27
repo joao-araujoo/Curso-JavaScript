@@ -6,3 +6,23 @@ pela soma de um termo posterior com o seu anterior subseqüente.
 Apresentar o resultado.
 */
 
+let resultado = []
+let auxiliar = 0
+let anterior = 0
+let atual = 1
+
+function fibonacci(n){
+    for(let x = 1; x <= n; x++){
+        resultado.push(auxiliar)
+        auxiliar = anterior + atual
+        anterior = atual
+        atual = auxiliar
+    }
+}
+
+fibonacci(13)
+
+for(let pos in resultado){
+    console.log(resultado[pos])
+}
+
