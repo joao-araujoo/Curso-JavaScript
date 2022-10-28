@@ -15,11 +15,20 @@ section {
     width: 500px;
     margin: auto;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.466);
+    text-align: center;
 }
 
 img {
-    width: 200px;
-    height: 120px;;
+    width: 250px;
+    height: 150px;
+}
+
+.dados {
+    padding: 6px;
+}
+
+#resultado {
+    margin-top: 10px;
 }
 
 footer {
