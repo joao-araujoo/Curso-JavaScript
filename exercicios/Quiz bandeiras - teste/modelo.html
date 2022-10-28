@@ -9,21 +9,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body onload="recarregar()">
     <header>
         <h1>Quiz de bandeiras</h1>
     </header>
 
     <section>
         <div id="dados">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/275px-Flag_of_Brazil.svg.png"><br>
+            <img id="imagem" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/275px-Flag_of_Brazil.svg.png"><br>
             <input type="text" name="resposta" id="resposta" placeholder="Qual o nome deste país?">
+            <button id="verificar">Confirmar</button>
+            <button id="proximo">Próximo</button>
         </div>
         <div id="resultado">
-            <p>
-                Resposta errada!<br>
-                Resposta correta!
-            </p>
+        
         </div>
     </section>
 
