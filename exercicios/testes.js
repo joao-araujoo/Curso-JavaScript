@@ -13,8 +13,4 @@ let países = [
 }
 ]
 
-let brasil = 0
-let eua = 1
-let mexico = 2
-
 console.log(países[brasil].capital)
