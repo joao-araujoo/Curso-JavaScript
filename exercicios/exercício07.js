@@ -4,7 +4,6 @@ function potência(b=0, e=0){
     return b**e
 }
 
-let base = 5 //O usuário escolhe
-let expoente = 2 //O usuário escolhe
+let números = {base: 11, expoente: 2} //O usuário insere os valores
 
-console.log(potência(base, expoente))
+console.log(potência(números.base, números.expoente))
