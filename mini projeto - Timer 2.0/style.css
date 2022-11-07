@@ -1,0 +1,36 @@
+body {
+    background: black;
+}
+
+div {
+    text-align: center;
+}
+
+h1 {
+    color: white;
+    font-size: 80px;
+}
+
+button {
+    height: 4.4em;
+    width: 11em;
+    border: none;
+    color: white;
+    margin-left: 5px;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+#iniciar {
+    background: green;
+}
+
+#pausar {
+    background: grey;
+}
+
+#parar {
+    background: red;
+}
