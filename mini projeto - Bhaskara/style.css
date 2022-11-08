@@ -44,7 +44,8 @@ input {
     width: 15em;
     height: 7.5em;
     padding: 3em;
-    background: #fff;
+    background: #000;
+    color: #fff;
     font-size: 2em;
     border-radius: 10%;
     box-shadow: 0px 8px 10px rgba(0, 0, 0, .5)
