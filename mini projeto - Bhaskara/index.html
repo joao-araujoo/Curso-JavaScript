@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Calculadora de Bháskara</title>
 </head>
 <body>
-    <div class="inputs">
-        <label for="a-value">A:</label>
-        <input type="number" name="a-value" id="a-value">
-        <label for="b-value">B:</label>
-        <input type="number" name="b-value" id="b-value">
-        <label for="c-value">C:</label>
-        <input type="number" name="c-value" id="c-value">
-        <button onclick="calcular()">Calcular</button>
+    <div>
+        <label for="a-value" class="inputs">A:</label>
+        <input type="number" name="a-value" id="a-value" class="inputs">
+        <label for="b-value" class="inputs">B:</label>
+        <input type="number" name="b-value" id="b-value" class="inputs">
+        <label for="c-value" class="inputs">C:</label>
+        <input type="number" name="c-value" id="c-value" class="inputs">
+        <button onclick="calcular()" id="botao-calcular">Calcular</button>
     </div>
     <div class="resultado">
         o resultado aparecerá aqui
