@@ -18,4 +18,3 @@ function calcular(){
         document.querySelector('.resultado').innerHTML += ' - Obesidade grau III'
     }
 }
-

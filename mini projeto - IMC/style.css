@@ -1,0 +1,17 @@
+body {
+    text-align: center;
+}
+
+input {
+    font-size: 0.7em;
+}
+
+.inputs {
+    font-size: 2em;
+    margin-top: 4em;
+}
+
+.resultado {
+    margin-top: 4em;
+    font-size: 2em;
+}
