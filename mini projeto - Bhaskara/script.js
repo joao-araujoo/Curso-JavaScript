@@ -11,16 +11,16 @@ function calcular() {
         let delta = (b ** 2) - 4 * a * c
 
         if(deltaMenorQueZero(delta)){
-            document.querySelector('div.resultado').innerHTML = `X = ∅<br>Nenhuma raíz real`
+            document.querySelector('div.resultado').innerHTML = `X = ∅<br><br>Nenhuma raíz real`
             resetar(a, b, c)
         } else if(delta == 0){
             const x = -b / (2 * a)
-            document.querySelector('div.resultado').innerHTML = `X = ${x.toFixed(2)}<br>Uma raíz real`
+            document.querySelector('div.resultado').innerHTML = `X = ${x.toFixed(2)}<br><br>Uma raíz real`
             resetar(a, b, c)
         } else{
             const x1 = (-b + Math.sqrt(delta)) / (2 * a)
             const x2 = (-b - Math.sqrt(delta)) / (2 * a)
-            document.querySelector('div.resultado').innerHTML = `X1 = ${x1.toFixed(2)} X2 = ${x2.toFixed(2)}<br>Duas raízes reais`
+            document.querySelector('div.resultado').innerHTML = `X1 = ${x1.toFixed(2)} X2 = ${x2.toFixed(2)}<br><br>Duas raízes reais`
             resetar(a, b, c)
         }
     }
