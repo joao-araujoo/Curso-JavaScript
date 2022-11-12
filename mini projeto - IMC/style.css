@@ -1,5 +1,11 @@
 body {
     text-align: center;
+    background: #D6E5E3;
+}
+
+h1 {
+    color: #A6B1E1;
+    font-size: 4em;
 }
 
 input {
