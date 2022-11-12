@@ -17,6 +17,13 @@ input {
     margin-top: 4em;
 }
 
+#botao-calcular {
+    background: #a6b1e1;
+    color: #424874;
+    border: none;
+    padding: 0.15em;
+}
+
 .resultado {
     margin-top: 4em;
     font-size: 2em;
