@@ -12,5 +12,10 @@ function backspace(){
 }
 
 function calcular(){
-
+    let resultado = document.querySelector('p#resultado').innerHTML
+    if(resultado){
+        document.querySelector('p#resultado').innerHTML = eval(resultado)
+    } else{
+        alert('Insira algum número para funcionar!')
+    }
 }
