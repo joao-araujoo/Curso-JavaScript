@@ -16,6 +16,7 @@ function calcular(){
     if(resultado){
         document.querySelector('p#resultado').innerHTML = eval(resultado)
     } else{
+        document.querySelector('p#resultado').innerHTML = '...'
         alert('Insira algum número para funcionar!')
     }
 }
