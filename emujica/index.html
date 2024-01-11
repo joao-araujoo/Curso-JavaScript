@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emujica</title>
+</head>
+<body>
+  <h2>Emujica</h2>
+  <input type="text" name="emoji-input" id="emoji-input">
+  <button onclick="playUserInput()">Play</button>
+
+  <script>
+    const emojiToSoundMap = {
+      "💚": "./drum/BUMBO COM EQ.wav",
+      "💙": "./drum/caixa com EQ.wav",
+      "💜": "./drum/ROTANTAN 8 SEM EQ.wav",
+      "🖤": "./drum/SURDO COM EQ.wav",
+      "🧡": "./drum/TOM 2 COM EQ.wav",
+      "🤎": "./drum/TOM 3 COM EQ.wav",
+    };
+
+    function playSound(emoji) {
+      const soundPath = emojiToSoundMap[emoji];
+      if (soundPath) {
+        const audio = new Audio(soundPath);
+        audio.play().catch((err) => {
+          console.error('Erro ao reproduzir som:', err);
+        });
+      } else {
+        console.error('Emoji não mapeado para som:', emoji);
+      }
+    }
+
+    function playUserInput() {
+      const userInput = ["🤎", "💚", "🖤", "💙", "💜", "🧡"];
+
+      for (let i = 0; i < userInput.length; i++) {
+        const emoji = userInput[i];
+        playSound(emoji);
+      }
+    }
+  </script>
+</body>
+</html>
