@@ -1,45 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emujica</title>
+  <title>Rhythm Game</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #282c34;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      color: #61dafb;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .game-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .drum-pad {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background-color: #3498db;
+      /* Azul */
+      color: #fff;
+      font-size: 14px;
+      padding: 15px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      text-transform: uppercase;
+      transition: background-color 0.3s;
+      pointer-events: none;
+      /* Bloqueia eventos de clique */
+    }
+
+    #start-button,
+    #free-mode-button,
+    #back-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
+    }
+
+    #start-button,
+    #free-mode-button {
+      background-color: #4CAF50;
+      /* Verde */
+      color: #282c34;
+    }
+
+    #back-button {
+      background-color: #e74c3c;
+      /* Vermelho */
+      color: #fff;
+      display: none;
+      /* Inicia oculto */
+    }
+
+    .drum-pad:hover,
+    .drum-pad.active {
+      background-color: #2980b9;
+    }
+
+    .key-label {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      font-size: 12px;
+      color: #fff;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 24px;
+    }
+  </style>
 </head>
+
 <body>
-  <h2>Emujica</h2>
-  <input type="text" name="emoji-input" id="emoji-input">
-  <button onclick="playUserInput()">Play</button>
+  <h2>Rhythm Game</h2>
+
+  <div class="button-container">
+    <button id="start-button" onclick="startGame()">Iniciar Jogo</button>
+    <button id="free-mode-button" onclick="startFreeMode()">Modo Livre</button>
+    <button id="back-button" onclick="backToMainMenu()">Voltar ao Menu Principal</button>
+  </div>
+
+  <div id="score">Score: 0 | Nível: 1</div>
+
+  <div class="game-container">
+    <button class="drum-pad" id="btn-kick" data-key="a">
+      Kick
+      <div class="key-label">A</div>
+    </button>
+    <button class="drum-pad" id="btn-snare" data-key="s">
+      Snare
+      <div class="key-label">S</div>
+    </button>
+    <button class="drum-pad" id="btn-tom1" data-key="d">
+      Tom 1
+      <div class="key-label">D</div>
+    </button>
+    <button class="drum-pad" id="btn-tom2" data-key="f">
+      Tom 2
+      <div class="key-label">F</div>
+    </button>
+    <button class="drum-pad" id="btn-hihat" data-key="g">
+      Hi-Hat
+      <div class="key-label">G</div>
+    </button>
+    <button class="drum-pad" id="btn-cymbal" data-key="h">
+      Cymbal
+      <div class="key-label">H</div>
+    </button>
+  </div>
 
   <script>
-    const emojiToSoundMap = {
-      "💚": "./drum/BUMBO COM EQ.wav",
-      "💙": "./drum/caixa com EQ.wav",
-      "💜": "./drum/ROTANTAN 8 SEM EQ.wav",
-      "🖤": "./drum/SURDO COM EQ.wav",
-      "🧡": "./drum/TOM 2 COM EQ.wav",
-      "🤎": "./drum/TOM 3 COM EQ.wav",
+    const instrumentToSoundMap = {
+      "a": "./drum/BUMBO COM EQ.wav",
+      "s": "./drum/caixa com EQ.wav",
+      "d": "./drum/TOM 1 COM EQ.wav",
+      "f": "./drum/TOM 2 COM EQ.wav",
+      "g": "./drum/ROTANTAN 8 COM EQ.wav",
+      "h": "./drum/SURDO COM EQ.wav",
     };
 
-    function playSound(emoji) {
-      const soundPath = emojiToSoundMap[emoji];
+    function playSound(key) {
+      const soundPath = instrumentToSoundMap[key];
       if (soundPath) {
         const audio = new Audio(soundPath);
         audio.play().catch((err) => {
           console.error('Erro ao reproduzir som:', err);
         });
       } else {
-        console.error('Emoji não mapeado para som:', emoji);
+        console.error('Tecla não mapeada para som:', key);
       }
     }
 
-    function playUserInput() {
-      const userInput = ["🤎", "💚", "🖤", "💙", "💜", "🧡"];
+    const drumPads = document.querySelectorAll('.drum-pad');
+    let sequence = [];
+    let currentIndex = 0;
+    let isGameActive = false;
+    let score = 0;
+    let level = 1;
 
-      for (let i = 0; i < userInput.length; i++) {
-        const emoji = userInput[i];
-        playSound(emoji);
+    function updateScore() {
+      const scoreElement = document.getElementById('score');
+      if (isGameActive) {
+        scoreElement.style.display = 'block';
+        scoreElement.innerText = 'Score: ' + score + ' | Nível: ' + level;
+      } else {
+        scoreElement.style.display = 'none';
       }
     }
+
+    function resetScore() {
+      score = 0;
+      updateScore();
+    }
+
+    function activatePad(button) {
+      button.classList.add('active');
+      setTimeout(() => {
+        button.classList.remove('active');
+      }, 100);
+    }
+
+    function startGame() {
+      if (!isGameActive) {
+        resetScore();
+        level = 1; // Reinicia o nível ao iniciar um novo jogo
+        generateSequence();
+        playNextInSequence();
+        isGameActive = true;
+        document.getElementById('start-button').style.display = 'none'; // Oculta o botão de iniciar
+        document.getElementById('free-mode-button').style.display = 'none'; // Oculta o botão de modo livre
+        document.getElementById('back-button').style.display = 'block'; // Mostra o botão de voltar
+        enableButtons(); // Habilita os botões durante o jogo
+      }
+    }
+
+    function startFreeMode() {
+      resetScore();
+      level = 1; // Reinicia o nível ao entrar no modo livre
+      document.getElementById('start-button').style.display = 'none'; // Oculta o botão de iniciar
+      document.getElementById('free-mode-button').style.display = 'none'; // Oculta o botão de modo livre
+      document.getElementById('back-button').style.display = 'block'; // Mostra o botão de voltar
+      enableButtons(); // Habilita os botões durante o modo livre
+    }
+
+    function backToMainMenu() {
+      isGameActive = false; // Interrompe o jogo ao voltar para o menu principal
+      document.getElementById('start-button').style.display = 'block'; // Mostra o botão de iniciar
+      document.getElementById('free-mode-button').style.display = 'block'; // Mostra o botão de modo livre
+      document.getElementById('back-button').style.display = 'none'; // Oculta o botão de voltar
+      disableButtons(); // Desabilita os botões no menu principal
+    }
+
+    function generateSequence() {
+      sequence = [];
+      for (let i = 0; i < level + 2; i++) {
+        const keys = Object.keys(instrumentToSoundMap);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        sequence.push(randomKey);
+      }
+    }
+
+    function playNextInSequence() {
+      currentIndex = 0;
+      displaySequence();
+    }
+
+    function displaySequence() {
+      isGameActive = false; // Desabilita a entrada do usuário durante a exibição da sequência
+      sequence.forEach((key, index) => {
+        setTimeout(() => {
+          const pad = document.querySelector(`[data-key="${key}"]`);
+          playSound(key);
+          activatePad(pad);
+
+          if (index === sequence.length - 1) {
+            setTimeout(() => {
+              clearHighlight();
+              isGameActive = true; // Permite a entrada do usuário após a exibição da sequência
+              enableButtons(); // Habilita os botões após a exibição da sequência
+            }, 1000);
+          }
+        }, (index + 1) * 1000);
+      });
+    }
+
+    function clearHighlight() {
+      drumPads.forEach((pad) => {
+        pad.classList.remove('active');
+      });
+      setTimeout(() => {
+        if (isGameActive) {
+          level++;
+          updateScore();
+          alert('Parabéns! Você passou para o próximo nível.');
+          resetScore();
+          generateSequence();
+          playNextInSequence();
+          disableButtons(); // Desabilita os botões durante a sequência
+        }
+      }, 1000);
+    }
+
+    function handleUserInput(clickedKey) {
+      if (isGameActive) {
+        const expectedKey = sequence[currentIndex];
+
+        if (clickedKey === expectedKey) {
+          playSound(clickedKey);
+          activatePad(document.querySelector(`[data-key="${clickedKey}"]`));
+          currentIndex++;
+
+          if (currentIndex === sequence.length) {
+            score += 10;
+            resetScore();
+            generateSequence();
+            playNextInSequence();
+            disableButtons(); // Desabilita os botões durante a sequência
+          }
+        } else {
+          alert('Game Over! Tente novamente.');
+          isGameActive = false;
+          document.getElementById('start-button').style.display = 'block'; // Mostra o botão de iniciar
+          document.getElementById('free-mode-button').style.display = 'block'; // Mostra o botão de modo livre
+          document.getElementById('back-button').style.display = 'none'; // Oculta o botão de voltar
+        }
+      }
+    }
+
+    function enableButtons() {
+      drumPads.forEach((pad) => {
+        pad.addEventListener('click', function () {
+          const key = this.getAttribute('data-key');
+          handleUserInput(key);
+        });
+      });
+
+      document.addEventListener('keydown', function (event) {
+        const key = event.key.toLowerCase();
+        const pad = document.querySelector(`[data-key="${key}"]`);
+
+        if (pad) {
+          playSound(key);
+          activatePad(pad);
+          handleUserInput(key);
+        }
+      });
+    }
+
+    function disableButtons() {
+      drumPads.forEach((pad) => {
+        pad.removeEventListener('click', function () {
+          const key = this.getAttribute('data-key');
+          handleUserInput(key);
+        });
+      });
+
+      document.removeEventListener('keydown', function (event) {
+        const key = event.key.toLowerCase();
+        const pad = document.querySelector(`[data-key="${key}"]`);
+
+        if (pad) {
+          playSound(key);
+          activatePad(pad);
+          handleUserInput(key);
+        }
+      });
+    }
+
   </script>
 </body>
+
 </html>
