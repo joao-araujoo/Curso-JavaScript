@@ -1,7 +1,7 @@
-class DiaryActivity {
-  constructor(summary, emotion, activities){
-    this.summary = summary;
-    this.emotion = emotion;
+export default class DiaryActivity {
+  constructor(description, mood, activities){
+    this.description = description;
+    this.mood = mood;
     this.activities = activities;
   }
 }
@@ -27,14 +27,14 @@ const myDay = new DiaryActivity("Hoje eu fiz tal tal tal...", "Feliz", [
 
 const totalActivity = [
   myDay,
-  // myDay,
-  // myDay,
-  // myDay,
-  // myDay,
-  // myDay,
-  // myDay,
-  // myDay,
-  // myDay,
+  myDay,
+  myDay,
+  myDay,
+  myDay,
+  myDay,
+  myDay,
+  myDay,
+  myDay,
 ];
 
 const getTimeOfActivities = () => {
@@ -42,11 +42,11 @@ const getTimeOfActivities = () => {
 
   totalActivity.map(diaryActivity => {
     diaryActivity.activities.forEach(activity => {
-      if (activitiesTotalTimeSpent.hasOwnProperty(activity.name)){
+      if (Object.prototype.hasOwnProperty.call(activitiesTotalTimeSpent, activity.name)){
         activitiesTotalTimeSpent[activity.name] += activity.timeSpent;
       } else {
         activitiesTotalTimeSpent[activity.name] = activity.timeSpent;
-      };
+      }
     });
   });
 
