@@ -312,7 +312,9 @@ const commands = {
   history: {
     description: "Displays command history.",
     execute: () => {
-      const numberedHistory = commandHistory.map((command, index) => `${index + 1} ${command}`);
+      const numberedHistory = commandHistory.map(
+        (command, index) => `${index + 1} ${command}`
+      );
       return numberedHistory.join("\n");
     },
   },
@@ -330,6 +332,45 @@ const commands = {
       const hours = Math.floor(minutes / 60);
 
       return `Uptime: ${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    },
+  },
+  curl: {
+    description: "Transfer a URL.",
+    execute: async (args) => {
+      if (!args) {
+        return "Usage: curl <url> [options]";
+      }
+
+      const [url, ...options] = args.trim().split(/\s+/);
+      const requestOptions = {
+        headers: {},
+      };
+
+      options.forEach((option, index, arr) => {
+        if (option === "--header" && index < arr.length - 1) {
+          const [headerKey, headerValue] = arr[index + 1].split(":");
+          requestOptions.headers[headerKey] = headerValue.trim();
+        } else if (option === "--auth" && index < arr.length - 1) {
+          const [username, password] = arr[index + 1].split(":");
+          requestOptions.headers.Authorization = `Basic ${btoa(
+            `${username}:${password}`
+          )}`;
+        } else if (option === "--token" && index < arr.length - 1) {
+          requestOptions.headers.Authorization = `Bearer ${arr[index + 1]}`;
+        } else if (option === "--method" && index < arr.length - 1) {
+          requestOptions.method = arr[index + 1].toUpperCase();
+        }
+        // Adicione outras opções conforme necessário
+      });
+
+      try {
+        const response = await fetch(url, requestOptions);
+        const content = await response.json();
+
+        return JSON.stringify(content, null, 2); // O terceiro parâmetro é a quantidade de espaços de indentação (opcional)
+      } catch (error) {
+        return `Error: ${error.message}`;
+      }
     },
   },
 };
@@ -357,14 +398,21 @@ function updatePrompt() {
   currentDirectoryElement.textContent = `📁 ${System.getCurrentDirectoryPath()} `;
 }
 
-function printMessage(command, output) {
+async function printMessage(command, outputPromise) {
   const outputElement = document.getElementById("output");
   if (command.trim().toLowerCase() === "clear") {
     outputElement.innerHTML = "";
   } else {
     outputElement.innerHTML += `<div class="command-line">${
       System.isInNodeMode ? ">>>" : `John@johns-air ~ %`
-    } ${command}</div>${output ? output + "<br>" : ""}`;
+    } ${command}</div>`;
+
+    try {
+      const output = await outputPromise;
+      outputElement.innerHTML += output ? `${output}<br>` : "";
+    } catch (error) {
+      outputElement.innerHTML += `Error: ${error.message}<br>`;
+    }
   }
   outputElement.scrollTop = outputElement.scrollHeight;
 }
