@@ -13,6 +13,26 @@ class Directory {
   }
 
   addFile(newFile) {
+    const existingFile = this.files.find(
+      (file) => file instanceof File && file.fileName === newFile.fileName
+    );
+
+    if (existingFile) {
+      // O arquivo com o mesmo nome já existe, adicione um número incremental
+      let counter = 1;
+      const [name, extension] = newFile.fileName.split(".");
+      let newFileName = `${name}${counter}.${extension}`;
+      while (
+        this.files.find(
+          (file) => file instanceof File && file.fileName === newFileName
+        )
+      ) {
+        counter++;
+        newFileName = `${name}${counter}.${extension}`;
+      }
+      newFile.fileName = newFileName;
+    }
+
     this.files.push(newFile);
   }
 }
@@ -29,6 +49,7 @@ class System {
   };
 
   static currentDirectory = System.directories.root;
+  static isInNodeMode = false;
 
   static createDirectory(directoryName) {
     const existingDirectory = System.currentDirectory.files.find(
@@ -68,17 +89,19 @@ class System {
       return "Changed to the root directory.";
     } else if (directoryName === "../") {
       if (System.currentDirectory !== System.directories.root) {
-        System.currentDirectory = System.currentDirectory.parentDirectory;
+        System.currentDirectory =
+          System.currentDirectory.parentDirectory || System.directories.root;
         return `Changed to the parent directory '${System.currentDirectory.directoryName}'.`;
       } else {
         return "You are already in the root directory.";
       }
     } else {
       const targetDirectory = System.currentDirectory.files.find(
-        (file) => file.directoryName === directoryName
+        (file) =>
+          file instanceof Directory && file.directoryName === directoryName
       );
 
-      if (targetDirectory && targetDirectory instanceof Directory) {
+      if (targetDirectory) {
         System.currentDirectory = targetDirectory;
         return `Changed to the directory '${System.currentDirectory.directoryName}'.`;
       } else {
@@ -105,6 +128,43 @@ class System {
       .map((file) => `"${file.fileName ?? file.directoryName}"`)
       .join(" ");
     return contents ? contents : "The directory is empty.";
+  }
+
+  static removeFileOrDirectory(targetName) {
+    const targetFileIndex = System.currentDirectory.files.findIndex(
+      (file) => file instanceof File && file.fileName === targetName
+    );
+
+    const targetDirectoryIndex = System.currentDirectory.files.findIndex(
+      (directory) =>
+        directory instanceof Directory && directory.directoryName === targetName
+    );
+
+    if (targetFileIndex !== -1) {
+      System.currentDirectory.files.splice(targetFileIndex, 1);
+      return `File '${targetName}' removed successfully.`;
+    } else if (targetDirectoryIndex !== -1) {
+      const targetDirectory =
+        System.currentDirectory.files[targetDirectoryIndex];
+      if (targetDirectory.files.length === 0) {
+        System.currentDirectory.files.splice(targetDirectoryIndex, 1);
+        return `Directory '${targetName}' removed successfully.`;
+      } else {
+        return `Error: Directory '${targetName}' is not empty. Remove its contents first.`;
+      }
+    } else {
+      return `Error: '${targetName}' not found.`;
+    }
+  }
+
+  static enterNodeMode() {
+    System.isInNodeMode = true;
+    document.getElementById("prompt").textContent = ">>>";
+  }
+
+  static exitNodeMode() {
+    System.isInNodeMode = false;
+    document.getElementById("prompt").textContent = "John@johns-air ~ %";
   }
 }
 
@@ -168,7 +228,7 @@ const commands = {
       fileNames.forEach((fileName) => {
         const newFile = new File(fileName, "This is a new file.");
         System.currentDirectory.addFile(newFile);
-        createdFiles.push(fileName);
+        createdFiles.push(newFile.fileName);
       });
 
       const filesString = createdFiles.length > 1 ? "files" : "file";
@@ -221,14 +281,60 @@ const commands = {
       );
 
       if (targetFile) {
-        return targetFile.content;
+        return ">>> " + targetFile.content;
       } else {
         return `The file '${fileName}' does not exist.`;
       }
     },
   },
+  node: {
+    description: "Enters Node.js interactive mode.",
+    execute: () => {
+      System.enterNodeMode();
+      return "Entered Node.js interactive mode. Type 'exit' to return to the normal prompt.";
+    },
+  },
+  pwd: {
+    description: "Print the current working directory.",
+    execute: () => System.getCurrentDirectoryPath(),
+  },
+  rm: {
+    description: "Remove files or directories.",
+    execute: (args) => {
+      if (!args) {
+        return "Usage: rm <file_name or directory_name>";
+      }
+
+      const targetName = args.trim();
+      return System.removeFileOrDirectory(targetName);
+    },
+  },
+  history: {
+    description: "Displays command history.",
+    execute: () => {
+      const numberedHistory = commandHistory.map((command, index) => `${index + 1} ${command}`);
+      return numberedHistory.join("\n");
+    },
+  },
+  date: {
+    description: "Display the current date and time.",
+    execute: () => new Date().toLocaleString(),
+  },
+  uptime: {
+    description: "Shows the time elapsed since the page was loaded.",
+    execute: () => {
+      const currentTime = new Date();
+      const elapsedTime = currentTime - startTime;
+      const seconds = Math.floor(elapsedTime / 1000);
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+
+      return `Uptime: ${hours}h ${minutes % 60}m ${seconds % 60}s`;
+    },
+  },
 };
 
+let startTime;
 let currentDirectory = "/";
 const commandHistory = [];
 let commandHistoryIndex = -1;
@@ -247,19 +353,26 @@ For example, "help greetings" will provide details about the greeting command.
 Have fun exploring the DAD console!`;
 
 function updatePrompt() {
-  prompt.textContent += `John@johns-air ${currentDirectory} % `;
   const currentDirectoryElement = document.getElementById("current-directory");
   currentDirectoryElement.textContent = `📁 ${System.getCurrentDirectoryPath()} `;
 }
 
+function printMessage(command, output) {
+  const outputElement = document.getElementById("output");
+  if (command.trim().toLowerCase() === "clear") {
+    outputElement.innerHTML = "";
+  } else {
+    outputElement.innerHTML += `<div class="command-line">${
+      System.isInNodeMode ? ">>>" : `John@johns-air ~ %`
+    } ${command}</div>${output ? output + "<br>" : ""}`;
+  }
+  outputElement.scrollTop = outputElement.scrollHeight;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  startTime = new Date();
   const output = document.getElementById("output");
   const input = document.getElementById("input");
-
-  function printMessage(message) {
-    output.innerHTML += message + (message ? "<br>" : "");
-    output.scrollTop = output.scrollHeight;
-  }
 
   input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
@@ -283,21 +396,45 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  document.addEventListener("keydown", function (event) {
+    // Verifica se as teclas Ctrl + C são pressionadas para sair do modo Node.js
+    if (event.ctrlKey && event.key === "c" && System.isInNodeMode) {
+      System.exitNodeMode();
+      updatePrompt();
+    }
+  });
+
   function executeCommand(command, args) {
     const fullCommand = `${command} ${args}`;
     if (fullCommand.trim() === "") {
       return;
     }
-    if (fullCommand.trim() !== "") {
-      commandHistory.unshift(fullCommand);
-      commandHistoryIndex = -1;
+
+    if (System.isInNodeMode) {
+      if (fullCommand.trim().toLowerCase() === "exit") {
+        System.exitNodeMode();
+        updatePrompt();
+      } else {
+        try {
+          const result = eval(fullCommand);
+          printMessage(fullCommand, `${result}`);
+        } catch (error) {
+          printMessage(fullCommand, `Error: ${error.message}`);
+        }
+      }
+    } else {
+      if (fullCommand.trim() !== "") {
+        commandHistory.unshift(fullCommand);
+        commandHistoryIndex = -1;
+      }
+
+      printMessage(
+        fullCommand,
+        commands[command]?.execute(args) || `Unknown command: ${fullCommand}`
+      );
     }
 
-    if (commands[command]) {
-      printMessage(commands[command].execute(args));
-    } else {
-      printMessage(`Unknown command: ${fullCommand}`);
-    }
+    updatePrompt();
   }
 
   updatePrompt();
